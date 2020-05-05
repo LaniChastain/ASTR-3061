@@ -83,3 +83,26 @@ plt.show()
 # zoom in on the lower left corner to see that all three curves
 # agree with the data. The linear Hubble relation works fine for z < 0.1.
 
+# Write log_likelihood fuction (IN PROGRESS)
+
+def log_likelihood(theta, redshift, dMpc, dMe):
+    c/H0 = theta
+    model = redshift * c/H0 + dMpc
+    sigma = dMe
+    return -0.5 * np.sum((y - model) ** 2 / sigma2 + np.log(sigma2))
+
+# Maximum liklihood estimation: 
+
+def log_prior(theta):
+    m, b, log_f = theta
+    if -5.0 < m < 0.5 and 0.0 < b < 10.0:
+        return 0.0
+    return -np.inf
+
+def log_probability(theta, x, y, yerr):
+    lp = log_prior(theta)
+    if not np.isfinite(lp):
+        return -np.inf
+    return lp + log_likelihood(theta, x, y, yerr)
+
+import emcee
