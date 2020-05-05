@@ -15,7 +15,7 @@ app_mag = data[:,4]
 estimated_errors = data[:,5]
 
 # DES data is in magnitudes so we must convert to distance modulus
-log_dist = app_mag - 19.3
+log_dist = app_mag + 19.3
 
 # log_dist is the "distance modulus"
 # from this we can compute the distance is parsecs
