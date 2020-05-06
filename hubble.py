@@ -4,6 +4,9 @@ Created on Sat Apr  4 12:56:55 2020
 
 Sample code to read in SNe data download from the net,
 plot it, and compare with predictions from BB cosmology
+Uses emcee to determine best fit for linear model and saves the resulting chains
+in a .txt file. 
+Plot emcee chains using Hubble_chain_plot.py
 
 @author: Lani Chastain
 """
