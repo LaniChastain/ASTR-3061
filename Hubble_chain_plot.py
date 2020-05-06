@@ -2,6 +2,9 @@
 """
 Created on Tue May  5 19:23:26 2020
 
+MCMC chains plotted from the Supernova Cosmology Probe (SCP) 
+using the linear Hubble relation. Data and emcee chains can be obtained from hubble.py
+
 @author: Lani Chastain
 """
 
