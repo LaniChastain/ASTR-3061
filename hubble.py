@@ -84,25 +84,62 @@ plt.show()
 # agree with the data. The linear Hubble relation works fine for z < 0.1.
 
 # Write log_likelihood fuction (IN PROGRESS)
-
-def log_likelihood(theta, redshift, dMpc, dMe):
-    c/H0 = theta
-    model = redshift * c/H0 + dMpc
-    sigma = dMe
-    return -0.5 * np.sum((y - model) ** 2 / sigma2 + np.log(sigma2))
-
-# Maximum liklihood estimation: 
-
-def log_prior(theta):
-    m, b, log_f = theta
-    if -5.0 < m < 0.5 and 0.0 < b < 10.0:
-        return 0.0
-    return -np.inf
-
-def log_probability(theta, x, y, yerr):
-    lp = log_prior(theta)
-    if not np.isfinite(lp):
-        return -np.inf
-    return lp + log_likelihood(theta, x, y, yerr)
-
 import emcee
+
+def model(c_H0, redshift):
+    return c_H0*(redshift)
+
+def log_likelihood(parameters):
+    c_H0 = parameters
+    exp_model = model(c_H0, redshift)
+    sigma = dMe
+   
+    X2 = ((dMpc - exp_model)/sigma)**2
+    L_i = np.sum(-0.5*np.log((2*np.pi*(sigma)**2)) -  X2/2.0)
+   
+    return L_i
+
+
+nwalkers, ndim = 500,1
+nsteps = 1000
+
+#randomly seed intial distribution
+
+c_H0_0 = np.random.uniform(67, 74, nwalkers)
+
+#dMpc_0 = np.random.uniform(0,30, nwalkers)
+
+#initial_state = np.column_stack((c_H0_0, dMpc_0))
+initial_state = c_H0_0.reshape(nwalkers, 1)
+sampler = emcee.EnsembleSampler(nwalkers, ndim, log_likelihood)
+sampler.run_mcmc(initial_state, nsteps)
+
+walker_chains = sampler.flatchain
+np.savetxt('hubble_chain.txt', walker_chains)
+
+
+
+#For Plotting: 
+
+chain = np.genfromtxt('hubble_chain.txt')
+chain = chain.reshape(1,1000,500)
+
+for c in chain:
+    plt.plot(c)
+plt.show()
+
+data = np.genfromtxt('SCPUnion2.1_mu_vs_z.txt')
+redshift = data.T[1]
+mm = data.T[2]
+dm = data.T[3]
+dlabel = 'SCP_2.1'
+dpc = 10.**(mm/5.+1.)
+dMpc = dpc / 10.**6
+
+plt.plot(redshift, dMpc, '.')
+plt.plot(redshift, 4900*redshift)
+plt.show()
+
+H0 = 3e5/4900
+print(H0)
+
